@@ -1,4 +1,5 @@
-const { watch_page } = require('.');
+const { DATE } = require('sequelize');
+const User = require('./user');
 
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('Post', {
@@ -11,16 +12,19 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(),
             allowNull: false,
         },
+        UserId: {
+            type: DataTypes.INTEGER,
+            reference: {
+                model: User,
+                key: 'id',
+            }
+        },
         videoURL: {
             type: DataTypes.STRING(),
             allowNull: false,
         },
         description: {
             type: DataTypes.STRING(200),
-            allowNull: false,
-        },
-        uploadDate: {
-            type: DataTypes.DATEONLY(),
             allowNull: false,
         },
         view_count: {
@@ -37,10 +41,14 @@ module.exports = (sequelize, DataTypes) => {
         category_three: {
             type: DataTypes.STRING(),
             allowNull: true,
-        }
+        },
+        video_source: {
+            type: DataTypes.STRING(),
+            allowNull: true,
+        },
     }, {
         //모델의 옵션들을 지정하는곳    
         freezeTableName: true,
-        timestamps: false,
+        timestamps: true,
     });
 };

@@ -19,6 +19,10 @@ db.Like = require('./like')(sequelize, Sequelize);
 db.Is_watch = require('./is_watch')(sequelize, Sequelize);
 db.Comment = require('./comment')(sequelize, Sequelize);
 
+/** 1 : N   User : Post */
+db.User.hasMany(db.Post, { onDelete: 'cascade' });
+db.Post.belongsTo(db.User);
+
 
 /** N: M    User : Post => Comment */
 db.User.belongsToMany(db.Post, { through: 'Comment', as: 'writern' });
