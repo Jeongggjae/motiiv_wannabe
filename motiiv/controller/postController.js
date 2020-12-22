@@ -23,52 +23,28 @@ module.exports = {
     readAllPosts: async (req, res) => {
         const filters = req.query.filters;
 
-        // 최신순 정렬
-        if (filters == 'newest') {
-            try {
-                const post = await Post.findAll({
-                    group: 'id',
-                    order: [
-                        ['createdAt', 'DESC']
-                    ],
-                    attributes: ['title', 'description', 'videoURL', 'thumbnailURL', [sequelize.fn("COUNT", "Liker.Like.PostId"), 'likeCnt']]
-                });
-                return res.status(sc.OK).send(ut.success(sc.OK, rm.READ_POST_ALL_SUCCESS, post));
-            } catch (err) {
-                console.log(err);
-                return res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR, rm.READ_POST_ALL_SUCCESS));
-            }
-        }
-
-        // 인기순 정렬
-        if (filters == 'popular') {
-            try {
-                const post = await Post.findAll({
-                    order: [
-                        ['view_count', 'DESC']
-                    ],
-                    group: 'id',
-                    attributes: ['title', 'description', 'videoURL', 'thumbnailURL', [sequelize.fn("COUNT", "Liker.Like.PostId"), 'likeCnt']]
-                });
-                return res.status(sc.OK).send(ut.success(sc.OK, rm.READ_POST_ALL_SUCCESS, post));
-            } catch (err) {
-                console.log(err);
-                return res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR, rm.READ_POST_ALL_SUCCESS));
-            }
-        }
-
-        // 모든 항목
         try {
             const post = await Post.findAll({
                 group: 'id',
-                attributes: ['title', 'description', 'videoURL', 'thumbnailURL', [sequelize.fn("COUNT", "Liker.Like.PostId"), 'likeCnt']]
+                attributes: ['id', 'title', 'description', 'view_count', 'videoURL', 'thumbnailURL', 'createdAt', [sequelize.fn("COUNT", "Liker.Like.PostId"), 'likeCnt']],
+                include: [{
+                    model: User,
+                    as: 'Liked',
+                    attributes: [],
+                    through: { attributes: [] }
+                }]
             });
-            return res.status(sc.OK).send(ut.success(sc.OK, rm.READ_POST_ALL_SUCCESS, post));
+            let allPosts = post.map(item => item.dataValues);
+            let popular = post.map(item => item.dataValues).sort((a, b) => b.view_count - a.view_count);
+            let newest = post.map(item => item.dataValues).sort((a, b) => b.createdAt - a.createdAt);
+
+            return res.status(sc.OK).send(ut.success(sc.OK, rm.READ_POST_ALL_SUCCESS, { post, popular, newest }));
         } catch (err) {
             console.log(err);
             return res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR, rm.READ_POST_ALL_SUCCESS));
         }
     },
+
 
     postDetail: async (req, res) => {
         const idx = req.query.idx;
@@ -84,7 +60,13 @@ module.exports = {
                 where: {
                     id: idx,
                 },
-                attributes: ['title', 'description', 'videoURL', 'thumbnailURL', [sequelize.fn("COUNT", "Liker.Like.PostId"), 'likeCnt'], 'view_count']
+                attributes: ['title', 'description', 'videoURL', 'thumbnailURL', [sequelize.fn("COUNT", "Liker.Like.PostId"), 'likeCnt'], 'view_count'],
+                include: [{
+                    model: User,
+                    as: 'writern',
+                    attributes: ['profileImage'],
+                    through: { attributes: [] }
+                }]
             });
             return res.status(sc.OK).send(ut.success(sc.OK, rm.READ_POST_ALL_SUCCESS, details));
         } catch (err) {
@@ -92,7 +74,21 @@ module.exports = {
             return res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR, rm.READ_POST_SUCCESS));
         }
     },
+    postComment: async (req, res) => {
 
+        var newComment = req.body.comment;
+        newComment.author = req.user.id;
+        Post.update({ _id: req.params.id }, { $push: { comments: newComment } }, function (err, post) {
+            if (err) return res.json({ success: false, message: err });
+            res.redirect('/posts/' + req.params.id + "?" + req._parsedUrl.query);
+        });
+
+        try {
+
+        } catch (err) {
+
+        }
+    },
     /*
     //항목별 데이터 받기
     const category = req.query.category;
