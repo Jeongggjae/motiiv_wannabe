@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             reference: {
                 model: User,
-                key: 'id'
+                key: 'id',
             }
         },
         PostId: {
