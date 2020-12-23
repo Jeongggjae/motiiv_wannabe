@@ -7,7 +7,6 @@ module.exports = (sequelize, DataTypes) => {
         idx: {
             type: DataTypes.INTEGER,
             primarykey: true,
-
         },
         //모델의 Attributes (Column)을 정의하는곳
         UserId: {

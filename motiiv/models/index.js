@@ -16,7 +16,6 @@ db.Sequelize = Sequelize;
 db.Post = require('./post')(sequelize, Sequelize);
 db.User = require('./user')(sequelize, Sequelize);
 db.Like = require('./like')(sequelize, Sequelize);
-db.Is_watch = require('./is_watch')(sequelize, Sequelize);
 db.Comment = require('./comment')(sequelize, Sequelize);
 
 /** 1 : N   User : Post */
@@ -28,20 +27,14 @@ db.Post.belongsTo(db.User);
 db.User.belongsToMany(db.Post, { through: 'Comment', as: 'writern' });
 db.Post.belongsToMany(db.User, { through: 'Comment', as: 'writtenpost' });
 
+
 /** 1 : N   User : Comment */
 db.User.hasMany(db.Comment, { onDelete: 'cascade' });
 db.Comment.belongsTo(db.User);
 
-
 /** N:M     User : Post => Like */
 db.User.belongsToMany(db.Post, { through: 'Like', as: 'Liker' });
 db.Post.belongsToMany(db.User, { through: 'Like', as: 'Liked' });
-
-
-/** N:M     User : Post => is_watch */
-db.User.belongsToMany(db.Post, { through: 'Is_watch', as: 'watched_user' });
-db.Post.belongsToMany(db.User, { through: 'Is_watch', as: 'watched_post' });
-
 
 
 module.exports = db;

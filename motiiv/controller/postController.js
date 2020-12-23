@@ -25,7 +25,7 @@ module.exports = {
         try {
             const post = await Post.findAll({
                 group: 'id',
-                attributes: ['id', 'title', 'description', 'view_count', 'videoURL', 'thumbnailURL', 'createdAt', [sequelize.fn("COUNT", "Liker.Like.PostId"), 'likeCnt']],
+                attributes: ['id', 'title', 'description', 'view_count', 'videoURL', 'thumbnailURL', 'createdAt', 'category_one', [sequelize.fn("COUNT", "Liker.Like.PostId"), 'likeCnt']],
                 include: [{
                     model: User,
                     as: 'Liked',
@@ -101,6 +101,7 @@ module.exports = {
             const userInfo = await User.findOne({
                 where: {
                     id: UserId,
+                    as: "writern",
                 },
                 attributes: ['nickName', 'profileImage'],
 
