@@ -61,8 +61,11 @@ module.exports = {
                 attributes: ['title', 'description', 'videoURL', 'thumbnailURL', [sequelize.fn("COUNT", "Liker.Like.PostId"), 'likeCnt'], 'view_count'],
                 include: [{
                     model: User,
-                    attributes: ['nickName', 'profileImage'],
+                    as: 'Liked',
+                    attributes: [],
+                    through: { attributes: [] }
                 }],
+
             });
             return res.status(sc.OK).send(ut.success(sc.OK, rm.READ_POST_ALL_SUCCESS, details));
         } catch (err) {
