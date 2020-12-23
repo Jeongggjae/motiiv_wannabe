@@ -4,6 +4,11 @@ const User = require('./user');
 
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('Comment', {
+        idx: {
+            type: DataTypes.INTEGER,
+            primarykey: true,
+
+        },
         //모델의 Attributes (Column)을 정의하는곳
         UserId: {
             type: DataTypes.INTEGER,

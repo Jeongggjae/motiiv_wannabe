@@ -114,13 +114,12 @@ module.exports = {
         }
     },
     deleteComment: async (req, res) => {
-        const PostId = req.params.postId;
-        const UserId = req.body.UserId;
+        const commentidx = req.params.commentidx;
+
         try {
             await Comment.destroy({
                 where: {
-                    UserId,
-                    PostId,
+                    idx: commentidx,
                 },
             });
             return res.status(sc.OK).send(ut.success(sc.OK, rm.DELETE_LIKE_SUCCESS));
