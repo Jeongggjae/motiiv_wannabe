@@ -61,11 +61,8 @@ module.exports = {
                 attributes: ['title', 'description', 'videoURL', 'thumbnailURL', [sequelize.fn("COUNT", "Liker.Like.PostId"), 'likeCnt'], 'view_count'],
                 include: [{
                     model: User,
-                    as: 'Liked',
-                    attributes: [],
-                    through: { attributes: [] }
+                    attributes: ['nickName', 'profileImage'],
                 }],
-
             });
             return res.status(sc.OK).send(ut.success(sc.OK, rm.READ_POST_ALL_SUCCESS, details));
         } catch (err) {
@@ -95,22 +92,6 @@ module.exports = {
         }
     },
 
-    /*
-        createComment: async (req, res) => {
-            const idx = req.query.idx;
-            const { userId, content } = req.body;
-    
-            try {
-                const user = await User.findOne({ where: { id: userId } });
-                const postId = await Post.findOne({ where: { id: idx } });
-                await user.addPosts(post);
-                return res.status(sc.OK).send(ut.success(sc.OK, rm.CREATE_POST_SUCCESS, post));
-            } catch (err) {
-                console.log(err);
-                return res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR, rm.CREATE_POST_FAIL));
-            }
-        },
-    */
     createComment: async (req, res) => {
         const PostId = req.params.postId;
         const { UserId, content } = req.body;
