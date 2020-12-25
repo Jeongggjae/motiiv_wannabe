@@ -29,8 +29,8 @@ db.Post.belongsToMany(db.User, { through: 'Comment', as: 'writtenpost' });
 
 
 /** 1 : N   User : Comment */
-db.User.hasMany(db.Comment, { onDelete: 'cascade' });
-db.Comment.belongsTo(db.User);
+//db.User.hasMany(db.Comment, { onDelete: 'cascade' });
+//db.Comment.belongsTo(db.User);
 
 /** N:M     User : Post => Like */
 db.User.belongsToMany(db.Post, { through: 'Like', as: 'Liker' });

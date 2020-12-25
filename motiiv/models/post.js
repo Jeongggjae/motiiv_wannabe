@@ -4,7 +4,7 @@ module.exports = (sequelize, DataTypes) => {
     return sequelize.define('Post', {
         //모델의 Attributes (Column)을 정의하는곳
         title: {
-            type: DataTypes.STRING(30),
+            type: DataTypes.STRING(200),
             allowNull: false,
         },
         thumbnailURL: {
@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
         description: {
-            type: DataTypes.STRING(200),
+            type: DataTypes.STRING(10000),
             allowNull: false,
         },
         view_count: {

@@ -70,21 +70,22 @@ module.exports = {
             return res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR, rm.READ_POST_FAIL));
         }
     },
+
     getComment: async (req, res) => {
         const idx = req.params.postId;
 
         try {
-            const userInfo = await Comment.findAll({
+            const userInfo = await Post.findOne({
                 where: {
-                    PostId: idx,
+                    id: idx,
                 },
-                attributes: ['content'],
+                attributes: [],
                 include: [{
                     model: User,
+                    as: 'writtenpost',
                     attributes: ['nickName', 'profileImage'],
                 }],
             });
-
             return res.status(sc.OK).send(ut.success(sc.OK, rm.READ_POST_ALL_SUCCESS, userInfo));
         } catch (err) {
             console.log(err);
@@ -92,6 +93,39 @@ module.exports = {
         }
     },
 
+    createComment: async (req, res) => {
+        const PostId = req.params.postId;
+        const { UserId, content } = req.body;
+
+        try {
+            const comments = await Comment.create({
+                PostId: PostId,
+                UserId: UserId,
+                content: content,
+            });
+
+
+            /*
+            const comments = await Comment.create({ PostId, UserId, content });
+            
+            const userInfo = await User.findOne({
+                where: {
+                    id: UserId,
+                    as: "writern",
+                },
+                attributes: ['nickName', 'profileImage'],
+    
+            });
+            */
+
+            return res.status(sc.OK).send(ut.success(sc.OK, rm.CREATE_POST_SUCCESS, comments));
+        } catch (err) {
+            console.log(err)
+            return res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR, rm.CREATE_POST_FAIL));
+        }
+    },
+
+    /*
     createComment: async (req, res) => {
         const PostId = req.params.postId;
         const { UserId, content } = req.body;
@@ -114,13 +148,15 @@ module.exports = {
             return res.status(sc.INTERNAL_SERVER_ERROR).send(ut.fail(sc.INTERNAL_SERVER_ERROR, rm.CREATE_POST_FAIL));
         }
     },
+    */
+
     deleteComment: async (req, res) => {
         const commentidx = req.params.commentidx;
 
         try {
             await Comment.destroy({
                 where: {
-                    idx: commentidx,
+                    Id: commentidx,
                 },
             });
             return res.status(sc.OK).send(ut.success(sc.OK, rm.DELETE_LIKE_SUCCESS));
